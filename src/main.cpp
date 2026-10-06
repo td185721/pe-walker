@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -86,7 +87,21 @@ void dump_file_header(const IMAGE_FILE_HEADER& fh) {
     std::printf("File header\n");
     std::printf("  machine        : %s (0x%04x)\n", machine_name(fh.Machine), fh.Machine);
     std::printf("  sections       : %u\n", fh.NumberOfSections);
-    std::printf("  timestamp      : 0x%08lx\n", static_cast<unsigned long>(fh.TimeDateStamp));
+
+    // TimeDateStamp is a Unix epoch. For reproducible builds MSVC may emit
+    // a non-time hash (e.g. a Debug Info Hash). Print the raw value plus the
+    // decoded UTC date when it looks like a plausible timestamp.
+    const auto raw_ts = static_cast<std::uint32_t>(fh.TimeDateStamp);
+    char ts_buf[32] = "unknown";
+    if (raw_ts != 0 && raw_ts != 0xffffffff) {
+        const std::time_t t = static_cast<std::time_t>(raw_ts);
+        std::tm utc{};
+        if (gmtime_s(&utc, &t) == 0) {
+            std::strftime(ts_buf, sizeof(ts_buf), "%Y-%m-%d %H:%M:%S UTC", &utc);
+        }
+    }
+    std::printf("  timestamp      : 0x%08lx (%s)\n",
+                static_cast<unsigned long>(raw_ts), ts_buf);
     std::printf("  symtab offset  : 0x%08lx\n", static_cast<unsigned long>(fh.PointerToSymbolTable));
     std::printf("  characteristics: 0x%04x\n", fh.Characteristics);
 }

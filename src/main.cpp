@@ -63,8 +63,7 @@ const T* at(const std::vector<unsigned char>& image, std::size_t offset) {
     return reinterpret_cast<const T*>(image.data() + offset);
 }
 
-std::size_t rva_to_offset(const std::vector<unsigned char>& image,
-                          const IMAGE_SECTION_HEADER* sections, WORD count,
+std::size_t rva_to_offset(const IMAGE_SECTION_HEADER* sections, WORD count,
                           DWORD rva) {
     for (WORD i = 0; i < count; ++i) {
         const auto& s = sections[i];
@@ -130,7 +129,7 @@ void dump_imports(const std::vector<unsigned char>& image,
         std::printf("Imports: (none)\n");
         return;
     }
-    const auto imp_off = rva_to_offset(image, sections, count, import_rva);
+    const auto imp_off = rva_to_offset(sections, count, import_rva);
     if (!imp_off) {
         std::printf("Imports: (RVA 0x%lx not in any section)\n",
                     static_cast<unsigned long>(import_rva));
@@ -139,14 +138,14 @@ void dump_imports(const std::vector<unsigned char>& image,
     std::printf("Imports\n");
     const auto* desc = at<IMAGE_IMPORT_DESCRIPTOR>(image, imp_off);
     for (std::size_t i = 0; desc[i].Name; ++i) {
-        const auto name_off = rva_to_offset(image, sections, count, desc[i].Name);
+        const auto name_off = rva_to_offset(sections, count, desc[i].Name);
         if (!name_off) continue;
         const auto* dll_name = reinterpret_cast<const char*>(image.data() + name_off);
         std::printf("  %s\n", dll_name);
 
         const auto thunk_rva = desc[i].OriginalFirstThunk ? desc[i].OriginalFirstThunk
                                                           : desc[i].FirstThunk;
-        const auto thunk_off = rva_to_offset(image, sections, count, thunk_rva);
+        const auto thunk_off = rva_to_offset(sections, count, thunk_rva);
         if (!thunk_off) continue;
 
         if (is_64) {
@@ -156,7 +155,7 @@ void dump_imports(const std::vector<unsigned char>& image,
                     std::printf("      #%u\n", static_cast<unsigned>(thunks[j] & 0xffff));
                 } else {
                     const auto hint_off = rva_to_offset(
-                        image, sections, count, static_cast<DWORD>(thunks[j]));
+                        sections, count, static_cast<DWORD>(thunks[j]));
                     if (hint_off && hint_off + 2 < image.size()) {
                         std::printf("      %s\n", reinterpret_cast<const char*>(
                                                       image.data() + hint_off + 2));
@@ -169,7 +168,7 @@ void dump_imports(const std::vector<unsigned char>& image,
                 if (thunks[j] & 0x80000000U) {
                     std::printf("      #%u\n", thunks[j] & 0xffff);
                 } else {
-                    const auto hint_off = rva_to_offset(image, sections, count, thunks[j]);
+                    const auto hint_off = rva_to_offset(sections, count, thunks[j]);
                     if (hint_off && hint_off + 2 < image.size()) {
                         std::printf("      %s\n", reinterpret_cast<const char*>(
                                                       image.data() + hint_off + 2));
@@ -187,21 +186,21 @@ void dump_exports(const std::vector<unsigned char>& image,
         std::printf("Exports: (none)\n");
         return;
     }
-    const auto exp_off = rva_to_offset(image, sections, count, export_rva);
+    const auto exp_off = rva_to_offset(sections, count, export_rva);
     if (!exp_off) return;
     const auto* dir = at<IMAGE_EXPORT_DIRECTORY>(image, exp_off);
     std::printf("Exports (%lu by name, %lu by ordinal)\n",
                 static_cast<unsigned long>(dir->NumberOfNames),
                 static_cast<unsigned long>(dir->NumberOfFunctions));
 
-    const auto name_table_off  = rva_to_offset(image, sections, count, dir->AddressOfNames);
-    const auto ord_table_off   = rva_to_offset(image, sections, count, dir->AddressOfNameOrdinals);
+    const auto name_table_off  = rva_to_offset(sections, count, dir->AddressOfNames);
+    const auto ord_table_off   = rva_to_offset(sections, count, dir->AddressOfNameOrdinals);
     if (!name_table_off || !ord_table_off) return;
 
     const auto* name_rvas = at<DWORD>(image, name_table_off);
     const auto* ords      = at<WORD>(image, ord_table_off);
     for (DWORD i = 0; i < dir->NumberOfNames; ++i) {
-        const auto n_off = rva_to_offset(image, sections, count, name_rvas[i]);
+        const auto n_off = rva_to_offset(sections, count, name_rvas[i]);
         if (!n_off) continue;
         std::printf("  [%4u] %s\n", ords[i] + dir->Base,
                     reinterpret_cast<const char*>(image.data() + n_off));

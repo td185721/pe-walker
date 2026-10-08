@@ -225,13 +225,25 @@ void dump_exports(const std::vector<unsigned char>& image,
 }  // namespace
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        std::fprintf(stderr, "usage: %s <file.exe|file.dll>\n",
+    bool summary_only = false;
+    const char* path = nullptr;
+
+    for (int i = 1; i < argc; ++i) {
+        if (std::strcmp(argv[i], "--summary") == 0 ||
+            std::strcmp(argv[i], "-s") == 0) {
+            summary_only = true;
+        } else if (!path) {
+            path = argv[i];
+        }
+    }
+
+    if (!path) {
+        std::fprintf(stderr, "usage: %s [--summary|-s] <file.exe|file.dll>\n",
                      argc ? argv[0] : "pe-walker");
         return 2;
     }
 
-    auto image = read_file(argv[1]);
+    auto image = read_file(path);
 
     const auto* dos = at<IMAGE_DOS_HEADER>(image, 0);
     if (dos->e_magic != IMAGE_DOS_SIGNATURE) {
@@ -272,6 +284,8 @@ int main(int argc, char** argv) {
     const auto* sections = at<IMAGE_SECTION_HEADER>(
         image, opt_off + fh->SizeOfOptionalHeader);
     dump_sections(sections, fh->NumberOfSections);
+
+    if (summary_only) return 0;
 
     dump_imports(image, sections, fh->NumberOfSections, import_rva, is_64);
     dump_exports(image, sections, fh->NumberOfSections, export_rva);

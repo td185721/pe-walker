@@ -23,7 +23,14 @@ The resulting binary lives at `build/Release/pe-walker.exe` (MSVC) or
 
 ```powershell
 pe-walker.exe path\to\file.exe
+pe-walker.exe --summary path\to\file.exe
 ```
+
+### Flags
+
+| flag | effect |
+|------|--------|
+| `--summary`, `-s` | print headers and section list only; skip the import/export dumps. useful for a quick overview without pages of symbol names. |
 
 ## Example output
 

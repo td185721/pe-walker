@@ -5,9 +5,9 @@
 // small reference tool for anyone learning the PE/COFF format or needing
 // a quick-look utility that doesn't require spinning up a full RE suite.
 //
-// Build: see CMakeLists.txt (Windows / MSVC or MinGW-w64 / C++17).
+// Build: see CMakeLists.txt (C++17; MSVC, MinGW-w64, GCC or Clang).
 
-#include <windows.h>
+#include "pe_format.hpp"
 
 #include <cinttypes>
 #include <cstdio>
@@ -55,13 +55,34 @@ const char* subsystem_name(WORD subsystem) {
     }
 }
 
+// Returns `count` consecutive T at `offset`, or exits if any of them would
+// lie outside the file.
 template <typename T>
-const T* at(const std::vector<unsigned char>& image, std::size_t offset) {
-    if (offset + sizeof(T) > image.size()) {
+const T* at(const std::vector<unsigned char>& image, std::size_t offset,
+            std::size_t count = 1) {
+    if (offset > image.size() || count > (image.size() - offset) / sizeof(T)) {
         std::fprintf(stderr, "error: offset 0x%zx exceeds file size\n", offset);
         std::exit(1);
     }
     return reinterpret_cast<const T*>(image.data() + offset);
+}
+
+// NUL-terminated string at `offset`, cut off at the end of the file if the
+// terminator is missing.
+std::string cstr_at(const std::vector<unsigned char>& image, std::size_t offset) {
+    std::string out;
+    for (std::size_t i = offset; i < image.size() && image[i] != 0; ++i) {
+        out.push_back(static_cast<char>(image[i]));
+    }
+    return out;
+}
+
+bool to_utc(std::time_t t, std::tm& out) {
+#ifdef _WIN32
+    return gmtime_s(&out, &t) == 0;
+#else
+    return gmtime_r(&t, &out) != nullptr;
+#endif
 }
 
 std::size_t rva_to_offset(const IMAGE_SECTION_HEADER* sections, WORD count,
@@ -96,7 +117,7 @@ void dump_file_header(const IMAGE_FILE_HEADER& fh) {
     if (raw_ts != 0 && raw_ts != 0xffffffff) {
         const std::time_t t = static_cast<std::time_t>(raw_ts);
         std::tm utc{};
-        if (gmtime_s(&utc, &t) == 0) {
+        if (to_utc(t, utc)) {
             std::strftime(ts_buf, sizeof(ts_buf), "%Y-%m-%d %H:%M:%S UTC", &utc);
         }
     }
@@ -151,42 +172,43 @@ void dump_imports(const std::vector<unsigned char>& image,
         return;
     }
     std::printf("Imports\n");
-    const auto* desc = at<IMAGE_IMPORT_DESCRIPTOR>(image, imp_off);
-    for (std::size_t i = 0; desc[i].Name; ++i) {
-        const auto name_off = rva_to_offset(sections, count, desc[i].Name);
+    for (std::size_t i = 0;; ++i) {
+        const auto& desc = *at<IMAGE_IMPORT_DESCRIPTOR>(
+            image, imp_off + i * sizeof(IMAGE_IMPORT_DESCRIPTOR));
+        if (!desc.Name) break;
+        const auto name_off = rva_to_offset(sections, count, desc.Name);
         if (!name_off) continue;
-        const auto* dll_name = reinterpret_cast<const char*>(image.data() + name_off);
-        std::printf("  %s\n", dll_name);
+        std::printf("  %s\n", cstr_at(image, name_off).c_str());
 
-        const auto thunk_rva = desc[i].OriginalFirstThunk ? desc[i].OriginalFirstThunk
-                                                          : desc[i].FirstThunk;
+        const auto thunk_rva = desc.OriginalFirstThunk ? desc.OriginalFirstThunk
+                                                       : desc.FirstThunk;
         const auto thunk_off = rva_to_offset(sections, count, thunk_rva);
         if (!thunk_off) continue;
 
         if (is_64) {
-            const auto* thunks = at<ULONGLONG>(image, thunk_off);
-            for (std::size_t j = 0; thunks[j]; ++j) {
-                if (thunks[j] & 0x8000000000000000ULL) {
-                    std::printf("      #%u\n", static_cast<unsigned>(thunks[j] & 0xffff));
+            for (std::size_t j = 0;; ++j) {
+                const auto thunk = *at<ULONGLONG>(image, thunk_off + j * sizeof(ULONGLONG));
+                if (!thunk) break;
+                if (thunk & 0x8000000000000000ULL) {
+                    std::printf("      #%u\n", static_cast<unsigned>(thunk & 0xffff));
                 } else {
                     const auto hint_off = rva_to_offset(
-                        sections, count, static_cast<DWORD>(thunks[j]));
+                        sections, count, static_cast<DWORD>(thunk));
                     if (hint_off && hint_off + 2 < image.size()) {
-                        std::printf("      %s\n", reinterpret_cast<const char*>(
-                                                      image.data() + hint_off + 2));
+                        std::printf("      %s\n", cstr_at(image, hint_off + 2).c_str());
                     }
                 }
             }
         } else {
-            const auto* thunks = at<DWORD>(image, thunk_off);
-            for (std::size_t j = 0; thunks[j]; ++j) {
-                if (thunks[j] & 0x80000000U) {
-                    std::printf("      #%u\n", thunks[j] & 0xffff);
+            for (std::size_t j = 0;; ++j) {
+                const auto thunk = *at<DWORD>(image, thunk_off + j * sizeof(DWORD));
+                if (!thunk) break;
+                if (thunk & 0x80000000U) {
+                    std::printf("      #%u\n", thunk & 0xffff);
                 } else {
-                    const auto hint_off = rva_to_offset(sections, count, thunks[j]);
+                    const auto hint_off = rva_to_offset(sections, count, thunk);
                     if (hint_off && hint_off + 2 < image.size()) {
-                        std::printf("      %s\n", reinterpret_cast<const char*>(
-                                                      image.data() + hint_off + 2));
+                        std::printf("      %s\n", cstr_at(image, hint_off + 2).c_str());
                     }
                 }
             }
@@ -212,13 +234,12 @@ void dump_exports(const std::vector<unsigned char>& image,
     const auto ord_table_off   = rva_to_offset(sections, count, dir->AddressOfNameOrdinals);
     if (!name_table_off || !ord_table_off) return;
 
-    const auto* name_rvas = at<DWORD>(image, name_table_off);
-    const auto* ords      = at<WORD>(image, ord_table_off);
+    const auto* name_rvas = at<DWORD>(image, name_table_off, dir->NumberOfNames);
+    const auto* ords      = at<WORD>(image, ord_table_off, dir->NumberOfNames);
     for (DWORD i = 0; i < dir->NumberOfNames; ++i) {
         const auto n_off = rva_to_offset(sections, count, name_rvas[i]);
         if (!n_off) continue;
-        std::printf("  [%4u] %s\n", ords[i] + dir->Base,
-                    reinterpret_cast<const char*>(image.data() + n_off));
+        std::printf("  [%4u] %s\n", ords[i] + dir->Base, cstr_at(image, n_off).c_str());
     }
 }
 
@@ -252,7 +273,7 @@ int main(int argc, char** argv) {
     }
     dump_dos(dos);
 
-    const auto nt_off = static_cast<std::size_t>(dos->e_lfanew);
+    const auto nt_off = static_cast<std::size_t>(static_cast<DWORD>(dos->e_lfanew));
     const auto* sig = at<DWORD>(image, nt_off);
     if (*sig != IMAGE_NT_SIGNATURE) {
         std::fprintf(stderr, "error: missing PE signature\n");
@@ -282,7 +303,7 @@ int main(int argc, char** argv) {
     }
 
     const auto* sections = at<IMAGE_SECTION_HEADER>(
-        image, opt_off + fh->SizeOfOptionalHeader);
+        image, opt_off + fh->SizeOfOptionalHeader, fh->NumberOfSections);
     dump_sections(sections, fh->NumberOfSections);
 
     if (summary_only) return 0;

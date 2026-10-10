@@ -1,0 +1,65 @@
+DOS header
+  e_magic   : 0x5a4d ('MZ')
+  e_lfanew  : 0x000000f8
+File header
+  machine        : x86 (i386) (0x014c)
+  sections       : 4
+  timestamp      : 0x522ae636 (2013-09-07 08:39:18 UTC)
+  symtab offset  : 0x00000000
+  characteristics: 0x2102
+Optional header
+  entry point    : 0x000016b7
+  image base     : 0x0000000010000000
+  section align  : 0x00001000
+  file align     : 0x00000200
+  subsystem      : Windows GUI (2)
+  dll chars      : 0x0140
+  size of image  : 0x00007000
+  size of headers: 0x00000400
+Sections (4)
+  name       virt_size  virt_addr   raw_size raw_offset characteristics
+  .text     0x00001312 0x00001000 0x00001400 0x00000400 0x60000020
+  .rdata    0x00001066 0x00003000 0x00001200 0x00001800 0x40000040
+  .data     0x00000578 0x00005000 0x00000200 0x00002a00 0xc0000040
+  .reloc    0x00000334 0x00006000 0x00000400 0x00002c00 0x42000040
+Imports
+  KERNEL32.dll
+      QueryPerformanceCounter
+      GetCurrentProcessId
+      GetCurrentThreadId
+      GetSystemTimeAsFileTime
+      DisableThreadLibraryCalls
+      InitializeSListHead
+      IsDebuggerPresent
+      UnhandledExceptionFilter
+      SetUnhandledExceptionFilter
+      IsProcessorFeaturePresent
+      GetCurrentProcess
+      TerminateProcess
+  VCRUNTIME140.dll
+      __std_exception_copy
+      __std_exception_destroy
+      _CxxThrowException
+      __std_type_info_destroy_list
+      memset
+      _except_handler4_common
+  api-ms-win-crt-stdio-l1-1-0.dll
+      __acrt_iob_func
+      __stdio_common_vfprintf
+  api-ms-win-crt-heap-l1-1-0.dll
+      free
+      _callnewh
+      malloc
+  api-ms-win-crt-runtime-l1-1-0.dll
+      _initterm_e
+      _initterm
+      _seh_filter_dll
+      _configure_narrow_argv
+      _initialize_narrow_environment
+      _initialize_onexit_table
+      _execute_onexit_table
+      _cexit
+Exports (3 by name, 3 by ordinal)
+  [   1] sample_area
+  [   2] sample_make
+  [   3] sample_node_id

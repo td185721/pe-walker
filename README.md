@@ -3,15 +3,15 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/td185721/pe-walker/actions/workflows/ci.yml"><img src="https://github.com/td185721/pe-walker/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/td185721/pe-walker/releases/latest"><img src="https://img.shields.io/github/v/release/td185721/pe-walker?color=ffa657" alt="Latest release"></a>
+  <a href="https://github.com/sheranton/pe-walker/actions/workflows/ci.yml"><img src="https://github.com/sheranton/pe-walker/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/sheranton/pe-walker/releases/latest"><img src="https://img.shields.io/github/v/release/sheranton/pe-walker?color=ffa657" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/C%2B%2B-17-00599C?logo=cplusplus&logoColor=white" alt="C++17">
   <img src="https://img.shields.io/badge/runs%20on-Windows%20%7C%20Linux%20%7C%20macOS-30363d" alt="Runs on Windows, Linux and macOS">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license"></a>
 </p>
 
 <p align="center">
-  <sub><b>Toolkit:</b> <b>pe-walker</b> · <a href="https://github.com/td185721/pe-diff">pe-diff</a> · <a href="https://github.com/td185721/rtti-dump">rtti-dump</a> · <a href="https://github.com/td185721/vtable-dump">vtable-dump</a> · <a href="https://github.com/td185721/pattern-scan">pattern-scan</a> · <a href="https://github.com/td185721/unwind-map">unwind-map</a></sub>
+  <sub><b>Toolkit:</b> <b>pe-walker</b> · <a href="https://github.com/sheranton/pe-diff">pe-diff</a> · <a href="https://github.com/sheranton/rtti-dump">rtti-dump</a> · <a href="https://github.com/sheranton/vtable-dump">vtable-dump</a> · <a href="https://github.com/sheranton/pattern-scan">pattern-scan</a> · <a href="https://github.com/sheranton/unwind-map">unwind-map</a></sub>
 </p>
 
 `pe-walker` prints the structure of a Portable Executable (`.exe`, `.dll`, `.sys`): the DOS and NT headers, the optional header, the section table, and every imported and exported function. It is a quick-look tool for when you want the layout of a binary without opening a full reverse engineering suite, and a readable reference implementation for anyone learning PE/COFF.
@@ -77,7 +77,7 @@ Exports (3 by name, 3 by ordinal)
 
 ## Install
 
-Download a prebuilt binary for Windows x64, Linux x64 (statically linked) or macOS arm64 from the [latest release](https://github.com/td185721/pe-walker/releases/latest), or build from source with CMake 3.15+ and any C++17 compiler (MSVC, MinGW-w64, GCC, Clang):
+Download a prebuilt binary for Windows x64, Linux x64 (statically linked) or macOS arm64 from the [latest release](https://github.com/sheranton/pe-walker/releases/latest), or build from source with CMake 3.15+ and any C++17 compiler (MSVC, MinGW-w64, GCC, Clang):
 
 ```sh
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
@@ -127,8 +127,8 @@ Not covered yet: resources (`.rsrc`), base relocations, TLS callbacks, the debug
 
 ## See also
 
-- [pe-diff](https://github.com/td185721/pe-diff) compares two PE files using the same parsing.
-- [rtti-dump](https://github.com/td185721/rtti-dump) and [vtable-dump](https://github.com/td185721/vtable-dump) recover C++ classes from MSVC binaries.
+- [pe-diff](https://github.com/sheranton/pe-diff) compares two PE files using the same parsing.
+- [rtti-dump](https://github.com/sheranton/rtti-dump) and [vtable-dump](https://github.com/sheranton/vtable-dump) recover C++ classes from MSVC binaries.
 
 ## License
 

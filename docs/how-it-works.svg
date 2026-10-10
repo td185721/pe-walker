@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" role="img" aria-labelledby="t d">
+  <title id="t">How a PE file maps into memory</title>
+  <desc id="d">The six regions of sample64.dll drawn at scale in the file and in memory, with the mapping between them.</desc>
+  <style>
+    text { font-family: ui-monospace, 'JetBrains Mono', 'Cascadia Code', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
+    .flow { fill: none; stroke-dasharray: 2 10; stroke-linecap: round; animation: flow 1.3s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -24; } }
+    .fade { opacity: 0; animation: fade 0.6s ease-out forwards; }
+    @keyframes fade { to { opacity: 1; } }
+    
+    @media (prefers-reduced-motion: reduce) { .flow { animation: none; } .fade { animation: none; opacity: 1; } .anim { animation: none !important; } }
+  </style>
+  <defs>
+    <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="#1c2128"/></pattern>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#30363d" stroke-width="2"/></pattern>
+    <linearGradient id="edge" x1="0" x2="1"><stop offset="0" stop-color="#ffa657"/><stop offset="0.6" stop-color="#ffa657" stop-opacity="0.35"/><stop offset="1" stop-color="#ffa657" stop-opacity="0"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#8b949e"/></marker>
+    <clipPath id="card"><rect width="1200" height="470" rx="16"/></clipPath>
+  </defs>
+  <g clip-path="url(#card)">
+    <rect width="1200" height="470" fill="#0d1117"/>
+    <rect width="1200" height="470" fill="url(#dots)"/>
+    <rect width="1200" height="3" fill="url(#edge)"/>
+  </g>
+  <rect x="0.75" y="0.75" width="1198.5" height="468.5" rx="15.5" fill="none" stroke="#30363d" stroke-width="1.5"/>
+  <text x="40" y="48" font-size="13" letter-spacing="2" fill="#ffa657">HOW A PE FILE MAPS INTO MEMORY · sample64.dll</text>
+  <text x="40" y="76" font-size="13" fill="#8b949e" text-anchor="start" xml:space="preserve">The section table gives every section a place in the file (raw offset) and a place in memory (RVA).</text>
+  <text x="40" y="96" font-size="13" fill="#8b949e" text-anchor="start" xml:space="preserve">pe-walker prints both; this is the real layout of the test fixture.</text>
+  <text x="40" y="159" font-size="13" fill="#e6edf3" text-anchor="start" font-weight="700" xml:space="preserve">file</text>
+  <text x="40" y="176" font-size="11" fill="#6e7681" text-anchor="start" xml:space="preserve">15 KiB</text>
+  <text x="40" y="345" font-size="13" fill="#e6edf3" text-anchor="start" font-weight="700" xml:space="preserve">memory</text>
+  <text x="40" y="362" font-size="11" fill="#6e7681" text-anchor="start" xml:space="preserve">32 KiB image</text>
+  <rect x="150" y="318" width="1000" height="44" fill="url(#hatch)" stroke="#30363d"/>
+  <polygon class="fade" style="animation-delay: 0.20s" points="150.0,176 216.7,176 181.2,318 150.0,318" fill="#6e7681" fill-opacity="0.13" stroke="#6e7681" stroke-opacity="0.45"/>
+  <rect x="150.0" y="132" width="66.7" height="44" fill="#6e7681" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="150.0" y="318" width="31.2" height="44" fill="#6e7681" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="183.33333333333334" y="159" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">headers</text>
+  <text x="152.0" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x0</text>
+  <text x="152.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x0</text>
+  <polygon class="fade" style="animation-delay: 0.38s" points="216.7,176 550.0,176 426.1,318 275.0,318" fill="#ffa657" fill-opacity="0.13" stroke="#ffa657" stroke-opacity="0.45"/>
+  <rect x="216.7" y="132" width="333.3" height="44" fill="#ffa657" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="275.0" y="318" width="151.1" height="44" fill="#ffa657" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="383.33333333333337" y="159" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.text</text>
+  <text x="350.5615234375" y="345" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.text</text>
+  <text x="218.66666666666669" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x400</text>
+  <text x="277.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x1000</text>
+  <polygon class="fade" style="animation-delay: 0.56s" points="550.0,176 983.3,176 714.3,318 525.0,318" fill="#79c0ff" fill-opacity="0.13" stroke="#79c0ff" stroke-opacity="0.45"/>
+  <rect x="550.0" y="132" width="433.3" height="44" fill="#79c0ff" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="525.0" y="318" width="189.3" height="44" fill="#79c0ff" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="766.6666666666667" y="159" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.rdata</text>
+  <text x="619.66552734375" y="345" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.rdata</text>
+  <text x="552.0" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x1800</text>
+  <text x="527.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x3000</text>
+  <polygon class="fade" style="animation-delay: 0.74s" points="983.3,176 1050.0,176 800.1,318 775.0,318" fill="#7ee787" fill-opacity="0.13" stroke="#7ee787" stroke-opacity="0.45"/>
+  <rect x="983.3" y="132" width="66.7" height="44" fill="#7ee787" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="775.0" y="318" width="25.1" height="44" fill="#7ee787" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="1016.6666666666667" y="159" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.data</text>
+  <text x="985.3333333333334" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x3200</text>
+  <text x="777.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x5000</text>
+  <polygon class="fade" style="animation-delay: 0.92s" points="1050.0,176 1116.7,176 917.9,318 900.0,318" fill="#d2a8ff" fill-opacity="0.13" stroke="#d2a8ff" stroke-opacity="0.45"/>
+  <rect x="1050.0" y="132" width="66.7" height="44" fill="#d2a8ff" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="900.0" y="318" width="17.9" height="44" fill="#d2a8ff" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="1083.3333333333333" y="159" font-size="12" fill="#0d1117" text-anchor="middle" font-weight="700" xml:space="preserve">.pdata</text>
+  <text x="1052.0" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x3600</text>
+  <text x="902.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x6000</text>
+  <polygon class="fade" style="animation-delay: 1.10s" points="1116.7,176 1150.0,176 1029.9,318 1025.0,318" fill="#f778ba" fill-opacity="0.13" stroke="#f778ba" stroke-opacity="0.45"/>
+  <rect x="1116.7" y="132" width="33.3" height="44" fill="#f778ba" fill-opacity="0.85" stroke="#0d1117"/>
+  <rect x="1025.0" y="318" width="4.9" height="44" fill="#f778ba" fill-opacity="0.85" stroke="#0d1117"/>
+  <text x="1133.3333333333333" y="122" font-size="11" fill="#f778ba" text-anchor="middle" xml:space="preserve">.reloc</text>
+  <text x="1118.6666666666665" y="191" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x3a00</text>
+  <text x="1027.0" y="377" font-size="10" fill="#6e7681" text-anchor="start" xml:space="preserve">0x7000</text>
+  <text x="1150" y="377" font-size="10" fill="#6e7681" text-anchor="end" xml:space="preserve">0x8000</text>
+  <text x="40" y="418" font-size="12" fill="#8b949e" text-anchor="start" xml:space="preserve">Raw sizes are rounded up to FileAlignment (0x200). In memory every section starts on a SectionAlignment</text>
+  <text x="40" y="438" font-size="12" fill="#8b949e" text-anchor="start" xml:space="preserve">boundary (0x1000); the hatched space is padding the loader adds. .text holds the code, .rdata the import/export tables.</text>
+</svg>

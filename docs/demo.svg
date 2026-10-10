@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="648" height="640" viewBox="0 0 648.2 639.5" role="img" aria-label="pe-walker: headers and sections of a DLL">
+  <style>
+    text { font-family: ui-monospace, 'JetBrains Mono', 'Cascadia Code', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; font-size: 13.2px; }
+  .l { opacity: 0; animation: show 0.01s steps(1, end) forwards; }
+  @keyframes show { to { opacity: 1; } }
+  @keyframes hide { to { opacity: 0; } }
+  .cursor { animation: blink 1.06s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @keyframes type0 { to { transform: translateX(135.2px); } }
+  .ty0 { animation: type0 0.51s steps(17, end) 0.60s both; }
+  .cu0 { animation: hide 0.01s steps(1, end) 1.11s forwards; }
+  @keyframes type2 { to { transform: translateX(254.4px); } }
+  .ty2 { animation: type2 0.96s steps(32, end) 2.15s both; }
+  .cu2 { animation: hide 0.01s steps(1, end) 3.11s forwards; }
+  @media (prefers-reduced-motion: reduce) { .l { animation: none; opacity: 1; } .cover { display: none; } g[class^="ty"], .cursor { animation: none; } }
+  </style>
+  <rect x="0.75" y="0.75" width="646.7" height="638.0" rx="12" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <path d="M0.75 36V12.75a12 12 0 0 1 12-12h622.7a12 12 0 0 1 12 12V36z" fill="#161b22"/>
+  <line x1="0.75" y1="36" x2="647.5" y2="36" stroke="#30363d"/>
+  <circle cx="20" cy="18.0" r="5.5" fill="#ff5f57"/><circle cx="38" cy="18.0" r="5.5" fill="#febc2e"/><circle cx="56" cy="18.0" r="5.5" fill="#28c840"/>
+  <text x="324.1" y="22.5" text-anchor="middle" fill="#8b949e" font-size="12">pe-walker: headers and sections of a DLL</text>
+  <g class="l" style="animation-delay: 0.60s"><text x="22" y="68.5" textLength="151.1" lengthAdjust="spacing" xml:space="preserve"><tspan fill="#7ee787" font-weight="700">$ </tspan><tspan fill="#e6edf3" font-weight="700">file sample64.dll</tspan></text><g class="ty0"><rect class="cover" x="37.9" y="54.0" width="610.3" height="19.5" fill="#0d1117"/><rect class="cu0 cover" x="37.9" y="57.0" width="8.0" height="14.5" fill="#e6edf3" opacity="0.85"/></g></g>
+  <text x="22" y="88.0" textLength="604.2" lengthAdjust="spacing" class="l" style="animation-delay: 1.51s" xml:space="preserve"><tspan fill="#e6edf3">sample64.dll: PE32+ executable for MS Windows 6.00 (DLL), x86-64, 5 sections</tspan></text>
+  <g class="l" style="animation-delay: 2.15s"><text x="22" y="107.5" textLength="270.3" lengthAdjust="spacing" xml:space="preserve"><tspan fill="#7ee787" font-weight="700">$ </tspan><tspan fill="#e6edf3" font-weight="700">pe-walker --summary sample64.dll</tspan></text><g class="ty2"><rect class="cover" x="37.9" y="93.0" width="610.3" height="19.5" fill="#0d1117"/><rect class="cu2 cover" x="37.9" y="96.0" width="8.0" height="14.5" fill="#e6edf3" opacity="0.85"/></g></g>
+  <text x="22" y="127.0" textLength="79.5" lengthAdjust="spacing" class="l" style="animation-delay: 3.51s" xml:space="preserve"><tspan fill="#e6edf3" font-weight="700">DOS header</tspan></text>
+  <text x="22" y="146.5" textLength="214.7" lengthAdjust="spacing" class="l" style="animation-delay: 3.56s" xml:space="preserve"><tspan fill="#e6edf3">  e_magic   : </tspan><tspan fill="#56d4dd">0x5a4d</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">&#x27;MZ&#x27;</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="22" y="166.0" textLength="190.8" lengthAdjust="spacing" class="l" style="animation-delay: 3.60s" xml:space="preserve"><tspan fill="#e6edf3">  e_lfanew  : </tspan><tspan fill="#56d4dd">0x00000100</tspan></text>
+  <text x="22" y="185.5" textLength="87.5" lengthAdjust="spacing" class="l" style="animation-delay: 3.65s" xml:space="preserve"><tspan fill="#e6edf3" font-weight="700">File header</tspan></text>
+  <text x="22" y="205.0" textLength="310.1" lengthAdjust="spacing" class="l" style="animation-delay: 3.69s" xml:space="preserve"><tspan fill="#e6edf3">  machine        : </tspan><tspan fill="#7ee787">x64 (AMD64)</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#56d4dd">0x8664</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="22" y="224.5" textLength="159.0" lengthAdjust="spacing" class="l" style="animation-delay: 3.74s" xml:space="preserve"><tspan fill="#e6edf3">  sections       : </tspan><tspan fill="#56d4dd">5</tspan></text>
+  <text x="22" y="244.0" textLength="437.2" lengthAdjust="spacing" class="l" style="animation-delay: 3.78s" xml:space="preserve"><tspan fill="#e6edf3">  timestamp      : </tspan><tspan fill="#56d4dd">0xe452c1a9</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#7ee787">2091-05-21 23:32:57 UTC</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="22" y="263.5" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 3.83s" xml:space="preserve"><tspan fill="#e6edf3">  symtab offset  : </tspan><tspan fill="#6e7681">0x00000000</tspan></text>
+  <text x="22" y="283.0" textLength="198.8" lengthAdjust="spacing" class="l" style="animation-delay: 3.87s" xml:space="preserve"><tspan fill="#e6edf3">  characteristics: </tspan><tspan fill="#56d4dd">0x2022</tspan></text>
+  <text x="22" y="302.5" textLength="119.2" lengthAdjust="spacing" class="l" style="animation-delay: 3.92s" xml:space="preserve"><tspan fill="#e6edf3" font-weight="700">Optional header</tspan></text>
+  <text x="22" y="322.0" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 3.96s" xml:space="preserve"><tspan fill="#e6edf3">  entry point    : </tspan><tspan fill="#56d4dd">0x0000177c</tspan></text>
+  <text x="22" y="341.5" textLength="294.2" lengthAdjust="spacing" class="l" style="animation-delay: 4.01s" xml:space="preserve"><tspan fill="#e6edf3">  image base     : </tspan><tspan fill="#56d4dd">0x0000000180000000</tspan></text>
+  <text x="22" y="361.0" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 4.05s" xml:space="preserve"><tspan fill="#e6edf3">  section align  : </tspan><tspan fill="#56d4dd">0x00001000</tspan></text>
+  <text x="22" y="380.5" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 4.10s" xml:space="preserve"><tspan fill="#e6edf3">  file align     : </tspan><tspan fill="#56d4dd">0x00000200</tspan></text>
+  <text x="22" y="400.0" textLength="270.3" lengthAdjust="spacing" class="l" style="animation-delay: 4.14s" xml:space="preserve"><tspan fill="#e6edf3">  subsystem      : </tspan><tspan fill="#7ee787">Windows GUI</tspan><tspan fill="#e6edf3"> (</tspan><tspan fill="#56d4dd">2</tspan><tspan fill="#e6edf3">)</tspan></text>
+  <text x="22" y="419.5" textLength="198.8" lengthAdjust="spacing" class="l" style="animation-delay: 4.19s" xml:space="preserve"><tspan fill="#e6edf3">  dll chars      : </tspan><tspan fill="#56d4dd">0x0160</tspan></text>
+  <text x="22" y="439.0" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 4.23s" xml:space="preserve"><tspan fill="#e6edf3">  size of image  : </tspan><tspan fill="#56d4dd">0x00008000</tspan></text>
+  <text x="22" y="458.5" textLength="230.6" lengthAdjust="spacing" class="l" style="animation-delay: 4.28s" xml:space="preserve"><tspan fill="#e6edf3">  size of headers: </tspan><tspan fill="#56d4dd">0x00000400</tspan></text>
+  <text x="22" y="478.0" textLength="95.4" lengthAdjust="spacing" class="l" style="animation-delay: 4.32s" xml:space="preserve"><tspan fill="#e6edf3" font-weight="700">Sections (5)</tspan></text>
+  <text x="22" y="497.5" textLength="564.5" lengthAdjust="spacing" class="l" style="animation-delay: 4.37s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#6e7681">name       virt_size  virt_addr   raw_size raw_offset characteristics</tspan></text>
+  <text x="22" y="517.0" textLength="524.7" lengthAdjust="spacing" class="l" style="animation-delay: 4.41s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">.text    </tspan><tspan fill="#e6edf3"> 0x00001358 </tspan><tspan fill="#56d4dd">0x00001000</tspan><tspan fill="#e6edf3"> 0x00001400 </tspan><tspan fill="#56d4dd">0x00000400</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#6e7681">0x60000020</tspan></text>
+  <text x="22" y="536.5" textLength="524.7" lengthAdjust="spacing" class="l" style="animation-delay: 4.46s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">.rdata   </tspan><tspan fill="#e6edf3"> 0x0000183c </tspan><tspan fill="#56d4dd">0x00003000</tspan><tspan fill="#e6edf3"> 0x00001a00 </tspan><tspan fill="#56d4dd">0x00001800</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#6e7681">0x40000040</tspan></text>
+  <text x="22" y="556.0" textLength="524.7" lengthAdjust="spacing" class="l" style="animation-delay: 4.50s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">.data    </tspan><tspan fill="#e6edf3"> 0x00000338 </tspan><tspan fill="#56d4dd">0x00005000</tspan><tspan fill="#e6edf3"> 0x00000400 </tspan><tspan fill="#56d4dd">0x00003200</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#6e7681">0xc0000040</tspan></text>
+  <text x="22" y="575.5" textLength="524.7" lengthAdjust="spacing" class="l" style="animation-delay: 4.55s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">.pdata   </tspan><tspan fill="#e6edf3"> 0x0000024c </tspan><tspan fill="#56d4dd">0x00006000</tspan><tspan fill="#e6edf3"> 0x00000400 </tspan><tspan fill="#56d4dd">0x00003600</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#6e7681">0x40000040</tspan></text>
+  <text x="22" y="595.0" textLength="524.7" lengthAdjust="spacing" class="l" style="animation-delay: 4.59s" xml:space="preserve"><tspan fill="#e6edf3">  </tspan><tspan fill="#e3b341">.reloc   </tspan><tspan fill="#e6edf3"> 0x000000a0 </tspan><tspan fill="#56d4dd">0x00007000</tspan><tspan fill="#e6edf3"> 0x00000200 </tspan><tspan fill="#56d4dd">0x00003a00</tspan><tspan fill="#e6edf3"> </tspan><tspan fill="#6e7681">0x42000040</tspan></text>
+  <g class="l" style="animation-delay: 4.64s"><text x="22" y="614.5"><tspan fill="#7ee787" font-weight="700">$</tspan></text><rect class="cursor" x="37.9" y="603.0" width="8.0" height="14.5" fill="#e6edf3" opacity="0.85"/></g>
+</svg>

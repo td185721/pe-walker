@@ -8,6 +8,7 @@
 // Build: see CMakeLists.txt (C++17; MSVC, MinGW-w64, GCC or Clang).
 
 #include "pe_format.hpp"
+#include "term.hpp"
 
 #include <cinttypes>
 #include <cstdio>
@@ -97,17 +98,24 @@ std::size_t rva_to_offset(const IMAGE_SECTION_HEADER* sections, WORD count,
     return 0;
 }
 
+// Section headings are bold, addresses cyan, decoded names green.
+void heading(const char* text) {
+    std::printf("%s%s%s\n", term::bold(), text, term::reset());
+}
+
 void dump_dos(const IMAGE_DOS_HEADER* dos) {
-    std::printf("DOS header\n");
-    std::printf("  e_magic   : 0x%04x ('%c%c')\n", dos->e_magic,
-                dos->e_magic & 0xff, (dos->e_magic >> 8) & 0xff);
-    std::printf("  e_lfanew  : 0x%08lx\n", static_cast<unsigned long>(dos->e_lfanew));
+    const auto *C = term::cyan(), *G = term::green(), *R = term::reset();
+    heading("DOS header");
+    std::printf("  e_magic   : %s0x%04x%s (%s'%c%c'%s)\n", C, dos->e_magic, R, G,
+                dos->e_magic & 0xff, (dos->e_magic >> 8) & 0xff, R);
+    std::printf("  e_lfanew  : %s0x%08lx%s\n", C, static_cast<unsigned long>(dos->e_lfanew), R);
 }
 
 void dump_file_header(const IMAGE_FILE_HEADER& fh) {
-    std::printf("File header\n");
-    std::printf("  machine        : %s (0x%04x)\n", machine_name(fh.Machine), fh.Machine);
-    std::printf("  sections       : %u\n", fh.NumberOfSections);
+    const auto *C = term::cyan(), *G = term::green(), *D = term::dim(), *R = term::reset();
+    heading("File header");
+    std::printf("  machine        : %s%s%s (%s0x%04x%s)\n", G, machine_name(fh.Machine), R, C, fh.Machine, R);
+    std::printf("  sections       : %s%u%s\n", C, fh.NumberOfSections, R);
 
     // TimeDateStamp is a Unix epoch. For reproducible builds MSVC may emit
     // a non-time hash (e.g. a Debug Info Hash). Print the raw value plus the
@@ -121,40 +129,42 @@ void dump_file_header(const IMAGE_FILE_HEADER& fh) {
             std::strftime(ts_buf, sizeof(ts_buf), "%Y-%m-%d %H:%M:%S UTC", &utc);
         }
     }
-    std::printf("  timestamp      : 0x%08lx (%s)\n",
-                static_cast<unsigned long>(raw_ts), ts_buf);
-    std::printf("  symtab offset  : 0x%08lx\n", static_cast<unsigned long>(fh.PointerToSymbolTable));
-    std::printf("  characteristics: 0x%04x\n", fh.Characteristics);
+    std::printf("  timestamp      : %s0x%08lx%s (%s%s%s)\n",
+                C, static_cast<unsigned long>(raw_ts), R, G, ts_buf, R);
+    std::printf("  symtab offset  : %s0x%08lx%s\n", D, static_cast<unsigned long>(fh.PointerToSymbolTable), R);
+    std::printf("  characteristics: %s0x%04x%s\n", C, fh.Characteristics, R);
 }
 
 template <typename OptHeader>
 void dump_opt_header(const OptHeader& oh) {
-    std::printf("Optional header\n");
-    std::printf("  entry point    : 0x%08lx\n", static_cast<unsigned long>(oh.AddressOfEntryPoint));
-    std::printf("  image base     : 0x%016" PRIx64 "\n", static_cast<std::uint64_t>(oh.ImageBase));
-    std::printf("  section align  : 0x%08lx\n", static_cast<unsigned long>(oh.SectionAlignment));
-    std::printf("  file align     : 0x%08lx\n", static_cast<unsigned long>(oh.FileAlignment));
-    std::printf("  subsystem      : %s (%u)\n", subsystem_name(oh.Subsystem), oh.Subsystem);
-    std::printf("  dll chars      : 0x%04x\n", oh.DllCharacteristics);
-    std::printf("  size of image  : 0x%08lx\n", static_cast<unsigned long>(oh.SizeOfImage));
-    std::printf("  size of headers: 0x%08lx\n", static_cast<unsigned long>(oh.SizeOfHeaders));
+    const auto *C = term::cyan(), *G = term::green(), *R = term::reset();
+    heading("Optional header");
+    std::printf("  entry point    : %s0x%08lx%s\n", C, static_cast<unsigned long>(oh.AddressOfEntryPoint), R);
+    std::printf("  image base     : %s0x%016" PRIx64 "%s\n", C, static_cast<std::uint64_t>(oh.ImageBase), R);
+    std::printf("  section align  : %s0x%08lx%s\n", C, static_cast<unsigned long>(oh.SectionAlignment), R);
+    std::printf("  file align     : %s0x%08lx%s\n", C, static_cast<unsigned long>(oh.FileAlignment), R);
+    std::printf("  subsystem      : %s%s%s (%s%u%s)\n", G, subsystem_name(oh.Subsystem), R, C, oh.Subsystem, R);
+    std::printf("  dll chars      : %s0x%04x%s\n", C, oh.DllCharacteristics, R);
+    std::printf("  size of image  : %s0x%08lx%s\n", C, static_cast<unsigned long>(oh.SizeOfImage), R);
+    std::printf("  size of headers: %s0x%08lx%s\n", C, static_cast<unsigned long>(oh.SizeOfHeaders), R);
 }
 
 void dump_sections(const IMAGE_SECTION_HEADER* sections, WORD count) {
-    std::printf("Sections (%u)\n", count);
-    std::printf("  %-9s %10s %10s %10s %10s %s\n",
-                "name", "virt_size", "virt_addr", "raw_size", "raw_offset", "characteristics");
+    const auto *C = term::cyan(), *Y = term::yellow(), *D = term::dim(), *R = term::reset();
+    std::printf("%sSections (%u)%s\n", term::bold(), count, R);
+    std::printf("  %s%-9s %10s %10s %10s %10s %s%s\n", D,
+                "name", "virt_size", "virt_addr", "raw_size", "raw_offset", "characteristics", R);
     for (WORD i = 0; i < count; ++i) {
         const auto& s = sections[i];
         char name[9] = {};
         std::memcpy(name, s.Name, 8);
-        std::printf("  %-9s 0x%08lx 0x%08lx 0x%08lx 0x%08lx 0x%08lx\n",
-                    name,
+        std::printf("  %s%-9s%s 0x%08lx %s0x%08lx%s 0x%08lx %s0x%08lx%s %s0x%08lx%s\n",
+                    Y, name, R,
                     static_cast<unsigned long>(s.Misc.VirtualSize),
-                    static_cast<unsigned long>(s.VirtualAddress),
+                    C, static_cast<unsigned long>(s.VirtualAddress), R,
                     static_cast<unsigned long>(s.SizeOfRawData),
-                    static_cast<unsigned long>(s.PointerToRawData),
-                    static_cast<unsigned long>(s.Characteristics));
+                    C, static_cast<unsigned long>(s.PointerToRawData), R,
+                    D, static_cast<unsigned long>(s.Characteristics), R);
     }
 }
 
@@ -171,14 +181,14 @@ void dump_imports(const std::vector<unsigned char>& image,
                     static_cast<unsigned long>(import_rva));
         return;
     }
-    std::printf("Imports\n");
+    heading("Imports");
     for (std::size_t i = 0;; ++i) {
         const auto& desc = *at<IMAGE_IMPORT_DESCRIPTOR>(
             image, imp_off + i * sizeof(IMAGE_IMPORT_DESCRIPTOR));
         if (!desc.Name) break;
         const auto name_off = rva_to_offset(sections, count, desc.Name);
         if (!name_off) continue;
-        std::printf("  %s\n", cstr_at(image, name_off).c_str());
+        std::printf("  %s%s%s\n", term::magenta(), cstr_at(image, name_off).c_str(), term::reset());
 
         const auto thunk_rva = desc.OriginalFirstThunk ? desc.OriginalFirstThunk
                                                        : desc.FirstThunk;
@@ -190,7 +200,7 @@ void dump_imports(const std::vector<unsigned char>& image,
                 const auto thunk = *at<ULONGLONG>(image, thunk_off + j * sizeof(ULONGLONG));
                 if (!thunk) break;
                 if (thunk & 0x8000000000000000ULL) {
-                    std::printf("      #%u\n", static_cast<unsigned>(thunk & 0xffff));
+                    std::printf("      %s#%u%s\n", term::yellow(), static_cast<unsigned>(thunk & 0xffff), term::reset());
                 } else {
                     const auto hint_off = rva_to_offset(
                         sections, count, static_cast<DWORD>(thunk));
@@ -204,7 +214,7 @@ void dump_imports(const std::vector<unsigned char>& image,
                 const auto thunk = *at<DWORD>(image, thunk_off + j * sizeof(DWORD));
                 if (!thunk) break;
                 if (thunk & 0x80000000U) {
-                    std::printf("      #%u\n", thunk & 0xffff);
+                    std::printf("      %s#%u%s\n", term::yellow(), thunk & 0xffff, term::reset());
                 } else {
                     const auto hint_off = rva_to_offset(sections, count, thunk);
                     if (hint_off && hint_off + 2 < image.size()) {
@@ -226,9 +236,9 @@ void dump_exports(const std::vector<unsigned char>& image,
     const auto exp_off = rva_to_offset(sections, count, export_rva);
     if (!exp_off) return;
     const auto* dir = at<IMAGE_EXPORT_DIRECTORY>(image, exp_off);
-    std::printf("Exports (%lu by name, %lu by ordinal)\n",
+    std::printf("%sExports (%lu by name, %lu by ordinal)%s\n", term::bold(),
                 static_cast<unsigned long>(dir->NumberOfNames),
-                static_cast<unsigned long>(dir->NumberOfFunctions));
+                static_cast<unsigned long>(dir->NumberOfFunctions), term::reset());
 
     const auto name_table_off  = rva_to_offset(sections, count, dir->AddressOfNames);
     const auto ord_table_off   = rva_to_offset(sections, count, dir->AddressOfNameOrdinals);
@@ -239,7 +249,8 @@ void dump_exports(const std::vector<unsigned char>& image,
     for (DWORD i = 0; i < dir->NumberOfNames; ++i) {
         const auto n_off = rva_to_offset(sections, count, name_rvas[i]);
         if (!n_off) continue;
-        std::printf("  [%4u] %s\n", ords[i] + dir->Base, cstr_at(image, n_off).c_str());
+        std::printf("  %s[%4u]%s %s%s%s\n", term::dim(), ords[i] + dir->Base, term::reset(),
+                    term::green(), cstr_at(image, n_off).c_str(), term::reset());
     }
 }
 
@@ -247,22 +258,29 @@ void dump_exports(const std::vector<unsigned char>& image,
 
 int main(int argc, char** argv) {
     bool summary_only = false;
+    bool bad_flag = false;
+    term::Mode color = term::Mode::Auto;
     const char* path = nullptr;
 
     for (int i = 1; i < argc; ++i) {
-        if (std::strcmp(argv[i], "--summary") == 0 ||
-            std::strcmp(argv[i], "-s") == 0) {
+        const int c = term::parse_flag(argc, argv, i, color);
+        if (c != 0) {
+            bad_flag |= c < 0;
+        } else if (std::strcmp(argv[i], "--summary") == 0 ||
+                   std::strcmp(argv[i], "-s") == 0) {
             summary_only = true;
         } else if (!path) {
             path = argv[i];
         }
     }
 
-    if (!path) {
-        std::fprintf(stderr, "usage: %s [--summary|-s] <file.exe|file.dll>\n",
+    if (!path || bad_flag) {
+        std::fprintf(stderr,
+                     "usage: %s [--summary|-s] [--color auto|always|never] <file.exe|file.dll>\n",
                      argc ? argv[0] : "pe-walker");
         return 2;
     }
+    term::init(color);
 
     auto image = read_file(path);
 

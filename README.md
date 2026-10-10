@@ -16,12 +16,17 @@
 
 `pe-walker` prints the structure of a Portable Executable (`.exe`, `.dll`, `.sys`): the DOS and NT headers, the optional header, the section table, and every imported and exported function. It is a quick-look tool for when you want the layout of a binary without opening a full reverse engineering suite, and a readable reference implementation for anyone learning PE/COFF.
 
+<p align="center">
+  <img src="docs/demo.svg" width="648" alt="Animated terminal demo: file and pe-walker --summary on the test fixture, with colored output">
+</p>
+
 ## Highlights
 
 - **32- and 64-bit images:** both optional header layouts, and both thunk formats for name and ordinal imports.
 - **Runs anywhere:** the PE structures are defined in a portable header (`src/pe_format.hpp`), with no dependency on `<windows.h>`, so it analyses Windows binaries on Linux and macOS too.
 - **Safe on hostile input:** every header, table and string read is bounds-checked against the file, and a malformed binary produces an error instead of a crash.
 - **Readable timestamps:** `TimeDateStamp` is decoded to UTC. Reproducible (`/Brepro`) builds store a content hash there, so expect odd dates for those.
+- **Color in a terminal:** headings, addresses, decoded names, sections and DLLs are colored on a terminal, and piped output stays plain.
 - **Small and dependency-free:** one C++17 source file plus the portable PE header.
 
 ## Example
@@ -83,14 +88,23 @@ ctest --test-dir build -C Release      # optional: run the test suite
 ## Usage
 
 ```text
-pe-walker [--summary|-s] <file.exe|file.dll>
+pe-walker [--summary|-s] [--color auto|always|never] <file.exe|file.dll>
 ```
 
 | Flag | Effect |
 |---|---|
 | `--summary`, `-s` | Print the headers and section table only, without the import and export lists. |
+| `--color WHEN` | `auto` (default) colors output only on a terminal; `always` and `never` force it. Setting `NO_COLOR` turns colors off. |
 
 Exit status is `0` on success, `1` for an unreadable or malformed file, and `2` for a usage error.
+
+## How it works
+
+<p align="center">
+  <img src="docs/how-it-works.svg" width="100%" alt="The sections of sample64.dll drawn at scale in the file and in memory, with the mapping between them">
+</p>
+
+Every section has two locations: its raw offset and size in the file, and its RVA and virtual size once the loader maps it. pe-walker reads both from the section table and uses them to translate the RVAs found in the import and export directories into file offsets.
 
 ## What it covers
 
@@ -107,7 +121,7 @@ Not covered yet: resources (`.rsrc`), base relocations, TLS callbacks, the debug
 
 ## Testing
 
-- **Golden tests:** `ctest` runs the tool against x64 and x86 fixture DLLs and compares the output byte for byte with [`tests/expected`](tests/expected). The fixtures are built from source with [`tests/fixtures/build.cmd`](tests/fixtures/build.cmd).
+- **Golden tests:** `ctest` runs the tool against x64 and x86 fixture DLLs, plain and colored, and compares the output byte for byte with [`tests/expected`](tests/expected). The fixtures are built from source with [`tests/fixtures/build.cmd`](tests/fixtures/build.cmd).
 - **CI:** builds and tests on Windows (MSVC), Linux (GCC) and macOS (Clang) on every push, plus a MinGW-w64 cross-build.
 - **Portable-header regression:** when the code moved from `<windows.h>` to the portable header, its output was checked byte for byte against the previous build on 500 binaries from `System32` and `SysWOW64`. There were no differences.
 
